@@ -2,6 +2,7 @@ package me.gabriel.Traits;
 
 import java.util.ArrayList;
 
+import me.gabriel.Traits.data.TraitsData;
 import me.zach.DesertMC.Utils.Config.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,29 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 public class TraitsInventory implements Listener {
-	private static Plugin plugin = Bukkit.getPluginManager().getPlugin("Traits");
-
-	public static void initializeTraits(Player player) {
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.speed.bonus", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.speed.level", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.health.bonus", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.health.level", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.attack.bonus", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.attack.level", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.defense.bonus", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".trait.defense.level", 0);
-		plugin.getConfig().set(player.getUniqueId() + ".traittokens", 0);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".defense.ttstonext", 1);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".defense.gemstonext", 250);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".speed.ttstonext", 1);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".speed.gemstonext", 250);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".health.ttstonext", 1);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".health.gemstonext", 250);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".attack.ttstonext", 1);
-		plugin.getConfig().set(player.getUniqueId().toString() + ".attack.gemstonext", 250);
-		plugin.saveConfig();
-
-	}
 
 	public static ItemStack createTrait(String displayname, Material material) {
 		ItemStack trait = new ItemStack(material);
@@ -56,7 +34,7 @@ public class TraitsInventory implements Listener {
 	}
 
 	public static void openTraitInventory(Player player) {
-		Inventory i = plugin.getServer().createInventory(null, 27, "Traits Menu");
+		Inventory i = Bukkit.getPluginManager().getPlugin("Traits").getServer().createInventory(null, 27, "Traits Menu");
 		for (int j = 0; j < 27; j++) {
 			ItemStack empty = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7);
 			ItemMeta em = empty.getItemMeta();
@@ -75,10 +53,11 @@ public class TraitsInventory implements Listener {
 	}
 
 	public static void openSpecificTraitInventory(String trait, Player player, Material material) {
-		int Bonus = plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".bonus");
-		int Level = plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".level");
+		TraitsData data = TraitsData.get(player);
+		int Level = data.level(trait);
 		int NextLevel = Level + 1;
-		int NextBonus = Bonus + 3;
+		int Bonus = TraitsData.bonus(Level);
+		int NextBonus = TraitsData.bonus(NextLevel);
 
 		// Stats item
 		ItemStack statsitem = new ItemStack(material);
@@ -101,43 +80,35 @@ public class TraitsInventory implements Listener {
 		upgrademeta.setDisplayName(ChatColor.GREEN + "Train Trait");
 		upgrademeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		ArrayList<String> upgradelore = new ArrayList<String>();
+		int gems = ConfigUtils.getGems(player);
 
-		if (plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".level") == 20) {
+		if (data.level(trait) == 20) {
 			upgrademeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, false);
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			upgradelore.add(ChatColor.GOLD + "You have maxed out this trait!");
-			plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".canupgrade", false);
-			plugin.saveConfig();
-
+			data.canUpgrade(trait, gems);
 		} else {
 			upgradelore.add(ChatColor.YELLOW + "Materials required to train this trait to level " + ChatColor.BLUE
 					+ NextLevel + ChatColor.YELLOW + ": ");
 			upgradelore.add(ChatColor.BLUE + ""
-					+ plugin.getConfig().getInt(player.getUniqueId().toString() + "." + trait + ".ttstonext")
+					+ TraitsData.ttsToNext(data.level(trait))
 					+ ChatColor.YELLOW + " Trait Tokens, " + ChatColor.BLUE
-					+ plugin.getConfig().getInt(player.getUniqueId().toString() + "." + trait + ".gemstonext")
+					+ TraitsData.gemsToNext(data.level(trait))
 					+ ChatColor.GREEN + " Gems");
 			upgradelore.add(ChatColor.YELLOW + "Level " + ChatColor.BLUE + NextLevel + ChatColor.YELLOW
 					+ " TOTAL rewards: " + NextBonus + "% " + ChatColor.YELLOW + "better " + trait + ".");
 
-			if (ConfigUtils.getGems(player) >= plugin.getConfig()
-					.getInt(player.getUniqueId().toString() + "." + trait + ".gemstonext")
-					&& plugin.getConfig().getInt(player.getUniqueId().toString() + ".traittokens") >= plugin.getConfig()
-							.getInt(player.getUniqueId() + "." + trait + ".ttstonext")) {
+			if (data.canUpgrade(trait, gems)) {
 				upgradelore
 						.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "You have enough materials to train this trait!");
 				upgradelore.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "Click to upgrade!");
-				plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".canupgrade", true);
 			} else {
 				upgradelore.add(ChatColor.RED + "You do not have the required materials!");
-				plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".canupgrade", false);
 			}
-			plugin.saveConfig();
 		}
 		upgrademeta.setLore(upgradelore);
 		upgradeitem.setItemMeta(upgrademeta);
-
 		// TODO Autotrait
 
 		ItemStack autotraititem = new ItemStack(Material.BARRIER);
@@ -152,8 +123,7 @@ public class TraitsInventory implements Listener {
 		// Trait Token Item
 		ItemStack traittokenitem = new ItemStack(Material.DOUBLE_PLANT);
 		ItemMeta traittokenmeta = traittokenitem.getItemMeta();
-		traittokenmeta.setDisplayName(ChatColor.GREEN + "Trait Tokens: " + ChatColor.GREEN
-				+ plugin.getConfig().getInt(player.getUniqueId() + ".traittokens"));
+		traittokenmeta.setDisplayName(ChatColor.GREEN + "Trait Tokens: " + ChatColor.GREEN + data.getTraitTokens());
 		traittokenitem.setItemMeta(traittokenmeta);
 
 		// Gems item
@@ -163,7 +133,7 @@ public class TraitsInventory implements Listener {
 				+ ConfigUtils.getGems(player));
 		gemsitem.setItemMeta(gemsmeta);
 
-		Inventory i = plugin.getServer().createInventory(null, 36,
+		Inventory i = Bukkit.getPluginManager().getPlugin("Traits").getServer().createInventory(null, 36,
 				trait.substring(0, 1).toUpperCase() + trait.substring(1) + " Trait");
 
 		for (int j = 0; j < 36; j++) {
@@ -190,9 +160,11 @@ public class TraitsInventory implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		Inventory i = event.getClickedInventory();
 		ItemStack item = event.getCurrentItem();
+		TraitsData data = TraitsData.get(player);
 		if (i == null) {
 			return;
 		}
+
 		if (i.getTitle().equalsIgnoreCase("Traits Menu")) {
 			event.setCancelled(true);
 			if (item.getType().equals(Material.NETHER_STAR)) {
@@ -221,36 +193,16 @@ public class TraitsInventory implements Listener {
 			event.setCancelled(true);
 			String traitNoLowercase = i.getTitle().replaceAll(" Trait", "");
 			String trait = traitNoLowercase.substring(0, 1).toLowerCase() + traitNoLowercase.substring(1);
-			int Level = plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".level");
+			int Level = data.level(trait);
 
 			if (item.getType().equals(Material.DIAMOND)) {
-				if (plugin.getConfig().getBoolean(player.getUniqueId().toString() + "." + trait + ".canupgrade")) {
-					ConfigUtils.deductGems(player, plugin.getConfig().getInt(player.getUniqueId().toString() + "." + trait + ".gemstonext"));
-					plugin.getConfig().set(player.getUniqueId().toString() + ".traittokens",
-							plugin.getConfig().getInt(player.getUniqueId().toString() + ".traittokens") - plugin
-									.getConfig().getInt(player.getUniqueId().toString() + "." + trait + ".ttstonext"));
-					plugin.getConfig().set(player.getUniqueId().toString() + ".trait." + trait + ".bonus",
-							plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".bonus")
-									+ 2);
-					plugin.getConfig().set(player.getUniqueId().toString() + ".trait." + trait + ".level",
-							plugin.getConfig().getInt(player.getUniqueId().toString() + ".trait." + trait + ".level")
-									+ 1);
-					if(trait.equals("health") || trait.equals("speed")) new Events().forHSetSsetAndInit(player);
-
-
-
-					plugin.saveConfig();
+				int gems = ConfigUtils.getGems(player);
+				if (data.canUpgrade(trait, gems)) {
+					ConfigUtils.deductGems(player, TraitsData.gemsToNext(data.level(trait)));
+					if(trait.equals("health") || trait.equals("speed")) new Events().forHSetAndSset(player);
 					Level = Level + 1;
-
-					plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".gemstonext",
-							Level * 250 + 250);
-					player.sendMessage(ChatColor.GREEN + "Trait trained to level " + plugin.getConfig()
-							.getInt(player.getUniqueId().toString() + ".trait." + trait + ".level"));
-					plugin.saveConfig();
+					player.sendMessage(ChatColor.GREEN + "Trait trained to level " + Level + "!");
 					if (Level >= 16) {
-
-						plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".ttstonext", 3);
-						plugin.saveConfig();
 						if (trait.equalsIgnoreCase("health")) {
 							openSpecificTraitInventory(trait, player, Material.REDSTONE_BLOCK);
 							if (Level == 20) {
@@ -302,9 +254,6 @@ public class TraitsInventory implements Listener {
 						return;
 					}
 					if (Level >= 12) {
-
-						plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".ttstonext", 2);
-						plugin.saveConfig();
 						if (trait.equalsIgnoreCase("health")) {
 							openSpecificTraitInventory(trait, player, Material.REDSTONE_BLOCK);
 							player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
@@ -328,9 +277,6 @@ public class TraitsInventory implements Listener {
 						return;
 					}
 					if (Level >= 8) {
-
-						plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".ttstonext", 2);
-						plugin.saveConfig();
 						if (trait.equalsIgnoreCase("health")) {
 							openSpecificTraitInventory(trait, player, Material.REDSTONE_BLOCK);
 							player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
@@ -354,9 +300,6 @@ public class TraitsInventory implements Listener {
 						return;
 					}
 					if (Level >= 4) {
-
-						plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".ttstonext", 2);
-						plugin.saveConfig();
 						if (trait.equalsIgnoreCase("health")) {
 							openSpecificTraitInventory(trait, player, Material.REDSTONE_BLOCK);
 							player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
@@ -379,9 +322,6 @@ public class TraitsInventory implements Listener {
 						}
 						return;
 					}
-
-					plugin.getConfig().set(player.getUniqueId().toString() + "." + trait + ".ttstonext", 1);
-					plugin.saveConfig();
 					if (trait.equalsIgnoreCase("health")) {
 						openSpecificTraitInventory(trait, player, Material.REDSTONE_BLOCK);
 						player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
@@ -411,5 +351,4 @@ public class TraitsInventory implements Listener {
 		}
 
 	}
-
 }

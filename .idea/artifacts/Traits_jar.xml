@@ -3,7 +3,6 @@
     <output-path>$USER_HOME$/Desktop/Server/plugins</output-path>
     <root id="archive" name="Traits.jar">
       <element id="module-output" name="Traits" />
-      <element id="extracted-dir" path="$USER_HOME$/Desktop/Server/spigot.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
