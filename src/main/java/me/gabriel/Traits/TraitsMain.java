@@ -9,7 +9,6 @@ public class TraitsMain extends JavaPlugin{
 	public void onEnable() {
 		instancethis = this;
 		getCommand("traits").setExecutor(commands);
-		getCommand("traitsconfig").setExecutor(commands);
 		Bukkit.getPluginManager().registerEvents(new TraitsInventory(), this);
 		Bukkit.getPluginManager().registerEvents(new Events(), this);
 	}

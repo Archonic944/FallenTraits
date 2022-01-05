@@ -133,7 +133,7 @@ public class TraitsInventory implements Listener {
 				+ ConfigUtils.getGems(player));
 		gemsitem.setItemMeta(gemsmeta);
 
-		Inventory i = Bukkit.getPluginManager().getPlugin("Traits").getServer().createInventory(null, 36,
+		Inventory i = Bukkit.getServer().createInventory(null, 36,
 				trait.substring(0, 1).toUpperCase() + trait.substring(1) + " Trait");
 
 		for (int j = 0; j < 36; j++) {
