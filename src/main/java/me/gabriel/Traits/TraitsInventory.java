@@ -1,7 +1,5 @@
 package me.gabriel.Traits;
 
-import java.util.ArrayList;
-
 import me.gabriel.Traits.data.TraitsData;
 import me.zach.DesertMC.Utils.Config.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -17,7 +15,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
 
 public class TraitsInventory implements Listener {
 
@@ -54,7 +53,7 @@ public class TraitsInventory implements Listener {
 
 	public static void openSpecificTraitInventory(String trait, Player player, Material material) {
 		TraitsData data = TraitsData.get(player);
-		int Level = data.level(trait);
+		int Level = data.levelGet(trait);
 		int NextLevel = Level + 1;
 		int Bonus = TraitsData.bonus(Level);
 		int NextBonus = TraitsData.bonus(NextLevel);
@@ -82,7 +81,7 @@ public class TraitsInventory implements Listener {
 		ArrayList<String> upgradelore = new ArrayList<String>();
 		int gems = ConfigUtils.getGems(player);
 
-		if (data.level(trait) == 20) {
+		if (data.levelGet(trait) == 20) {
 			upgrademeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, false);
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -92,9 +91,9 @@ public class TraitsInventory implements Listener {
 			upgradelore.add(ChatColor.YELLOW + "Materials required to train this trait to level " + ChatColor.BLUE
 					+ NextLevel + ChatColor.YELLOW + ": ");
 			upgradelore.add(ChatColor.BLUE + ""
-					+ TraitsData.ttsToNext(data.level(trait))
+					+ TraitsData.ttsToNext(data.levelGet(trait))
 					+ ChatColor.YELLOW + " Trait Tokens, " + ChatColor.BLUE
-					+ TraitsData.gemsToNext(data.level(trait))
+					+ TraitsData.gemsToNext(data.levelGet(trait))
 					+ ChatColor.GREEN + " Gems");
 			upgradelore.add(ChatColor.YELLOW + "Level " + ChatColor.BLUE + NextLevel + ChatColor.YELLOW
 					+ " TOTAL rewards: " + NextBonus + "% " + ChatColor.YELLOW + "better " + trait + ".");
@@ -193,14 +192,14 @@ public class TraitsInventory implements Listener {
 			event.setCancelled(true);
 			String traitNoLowercase = i.getTitle().replaceAll(" Trait", "");
 			String trait = traitNoLowercase.substring(0, 1).toLowerCase() + traitNoLowercase.substring(1);
-			int Level = data.level(trait);
-
+			int Level = data.levelGet(trait);
 			if (item.getType().equals(Material.DIAMOND)) {
 				int gems = ConfigUtils.getGems(player);
 				if (data.canUpgrade(trait, gems)) {
-					ConfigUtils.deductGems(player, TraitsData.gemsToNext(data.level(trait)));
-					if(trait.equals("health") || trait.equals("speed")) new Events().forHSetAndSset(player);
+					ConfigUtils.deductGems(player, TraitsData.gemsToNext(data.levelGet(trait)));
 					Level = Level + 1;
+					data.levelSet(trait, Level);
+					if(trait.equals("health") || trait.equals("speed")) new Events().forHSetAndSset(player);
 					player.sendMessage(ChatColor.GREEN + "Trait trained to level " + Level + "!");
 					if (Level >= 16) {
 						if (trait.equalsIgnoreCase("health")) {

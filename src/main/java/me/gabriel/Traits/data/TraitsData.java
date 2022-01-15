@@ -59,17 +59,25 @@ public class TraitsData {
         this.healthLevel = healthLevel;
     }
 
-    public int level(String trait){
+    public int levelGet(String trait){
         if(trait.equals("speed")) return getSpeedLevel();
         else if(trait.equals("attack")) return getAttackLevel();
         else if(trait.equals("defense")) return getDefenseLevel();
         else if(trait.equals("health")) return getHealthLevel();
-        else throw new IllegalArgumentException("Cannot get level of trait " + trait);
+        else throw new IllegalArgumentException("Cannot get level of trait '" + trait + "'");
+    }
+
+    public void levelSet(String trait, int level){
+        if(trait.equals("speed")) setSpeedLevel(level);
+        else if(trait.equals("attack")) setAttackLevel(level);
+        else if(trait.equals("defense")) setDefenseLevel(level);
+        else if(trait.equals("health")) setHealthLevel(level);
+        else throw new IllegalArgumentException("Cannot set level of trait '" + trait + "'");
     }
 
     public boolean canUpgrade(String trait, int gems){
-        int level = level(trait);
-        return gemsToNext(level) >= gems && ttsToNext(level) >= traitTokens;
+        int level = levelGet(trait);
+        return gems >= gemsToNext(level) && traitTokens >= ttsToNext(level);
     }
 
     public static int gemsToNext(int level){
