@@ -21,6 +21,20 @@
             <artifactId>api</artifactId>
             <version>e48db52338</version>
         </dependency>
+        <dependency>
+            <groupId>Databank</groupId>
+            <artifactId>xyz.fallenmc</artifactId>
+            <scope>system</scope>
+            <systemPath>${user.home}/Desktop/Server/plugins/DataBank.jar</systemPath>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>MainPlugin</groupId>
+            <artifactId>xyz.fallenmc</artifactId>
+            <scope>system</scope>
+            <systemPath>${user.home}/Desktop/Server/plugins/MainPlugin.jar</systemPath>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -29,6 +43,4 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-
-
 </project>

@@ -25,7 +25,7 @@ public class TraitsInventory implements Listener {
 		ItemMeta meta = trait.getItemMeta();
 		meta.setDisplayName(ChatColor.AQUA + displayname);
 		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		ArrayList<String> lore = new ArrayList<String>();
+		ArrayList<String> lore = new ArrayList<>();
 		lore.add(ChatColor.YELLOW + "Click to open the trait menu for " + displayname);
 		meta.setLore(lore);
 		trait.setItemMeta(meta);
@@ -78,7 +78,7 @@ public class TraitsInventory implements Listener {
 		ItemMeta upgrademeta = upgradeitem.getItemMeta();
 		upgrademeta.setDisplayName(ChatColor.GREEN + "Train Trait");
 		upgrademeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		ArrayList<String> upgradelore = new ArrayList<String>();
+		ArrayList<String> upgradelore = new ArrayList<>();
 		int gems = ConfigUtils.getGems(player);
 
 		if (data.levelGet(trait) == 20) {
@@ -211,7 +211,6 @@ public class TraitsInventory implements Listener {
 								player.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "TRAIT MAXED!");
 							} else {
 								player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
-
 							}
 						}
 						if (trait.equalsIgnoreCase("speed")) {
@@ -339,15 +338,11 @@ public class TraitsInventory implements Listener {
 					if (trait.equalsIgnoreCase("defense")) {
 						openSpecificTraitInventory(trait, player, Material.DIAMOND_CHESTPLATE);
 						player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 2);
-
 					}
-
 				} else {
 					player.playSound(player.getLocation(), Sound.ANVIL_LAND, 10, 3);
 				}
 			}
-
 		}
-
 	}
 }
