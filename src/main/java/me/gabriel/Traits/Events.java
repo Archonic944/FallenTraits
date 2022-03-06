@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 public class Events implements Listener {
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void forHSetAndSset(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		forHSetAndSset(player);
@@ -27,7 +27,7 @@ public class Events implements Listener {
 		player.setWalkSpeed((0.2f / 100) * sBonus + 0.2f);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void forDamageAndDefense(EntityDamageByEntityEvent event) {
 		 if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
 			 Player damager = (Player) event.getDamager();
