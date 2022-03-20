@@ -15,16 +15,12 @@ public class Events implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void forHSetAndSset(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		forHSetAndSset(player);
-	}
-
-	public void forHSetAndSset(Player player) {
 		TraitsData data = TraitsData.get(player);
 		int hBonus = TraitsData.bonus(data.getHealthLevel());
 		int sBonus = TraitsData.bonus(data.getSpeedLevel());
-		player.setMaxHealth(0.2 * hBonus + 20);
+		player.setMaxHealth(hBonus + 20);
 		player.setHealth(player.getMaxHealth());
-		player.setWalkSpeed((0.2f / 100) * sBonus + 0.2f);
+		player.setWalkSpeed(TraitsData.SPEED_TICK * sBonus + 0.2f);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
