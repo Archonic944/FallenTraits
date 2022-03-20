@@ -30,7 +30,8 @@ public class Events implements Listener {
 			 Player damagee = (Player) event.getEntity();
 			 TraitsData damagerData = TraitsData.get(damager);
 			 TraitsData damageeData = TraitsData.get(damagee);
-			 event.setDamage((event.getDamage()/100) * TraitsData.bonus(damagerData.getAttackLevel()) + event.getDamage() - ((event.getDamage()/100) * TraitsData.bonus(damageeData.getDefenseLevel())));
+			 event.setDamage(((event.getDamage()/100) * TraitsData.bonus(damagerData.getAttackLevel()) + event.getDamage())
+					 - ((event.getDamage()/100) * TraitsData.bonus(damageeData.getDefenseLevel())));
 		 }
 	}
 }
