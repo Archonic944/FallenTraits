@@ -18,6 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 
+import static me.gabriel.Traits.data.TraitsData.BONUS_FACTOR;
+
 public class TraitsInventory implements Listener {
 
 	public static ItemStack createTrait(String displayname, Material material) {
@@ -196,10 +198,13 @@ public class TraitsInventory implements Listener {
 			if (item.getType().equals(Material.DIAMOND)) {
 				int gems = ConfigUtils.getGems(player);
 				if (data.canUpgrade(trait, gems)) {
+					data.setTraitTokens(data.getTraitTokens() - TraitsData.ttsToNext(Level));
 					ConfigUtils.deductGems(player, TraitsData.gemsToNext(data.levelGet(trait)));
 					Level = Level + 1;
 					data.levelSet(trait, Level);
-					if(trait.equals("health") || trait.equals("speed")) new Events().forHSetAndSset(player);
+					if(trait.equals("health")){
+						player.setMaxHealth(player.getMaxHealth() + BONUS_FACTOR);
+					}else if(trait.equals("speed")) player.setWalkSpeed(player.getWalkSpeed() + TraitsData.SPEED_TICK);
 					player.sendMessage(ChatColor.GREEN + "Trait trained to level " + Level + "!");
 					if (Level >= 16) {
 						if (trait.equalsIgnoreCase("health")) {
