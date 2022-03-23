@@ -18,7 +18,7 @@ public class Events implements Listener {
 		TraitsData data = TraitsData.get(player);
 		int hBonus = TraitsData.bonus(data.getHealthLevel());
 		int sBonus = TraitsData.bonus(data.getSpeedLevel());
-		player.setMaxHealth(hBonus + 20);
+		player.setMaxHealth(TraitsData.HEALTH_TICK * hBonus + 20);
 		player.setHealth(player.getMaxHealth());
 		player.setWalkSpeed(TraitsData.SPEED_TICK * sBonus + 0.2f);
 	}
