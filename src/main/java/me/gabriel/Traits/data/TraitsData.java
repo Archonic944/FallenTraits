@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public class TraitsData {
     public static final float SPEED_TICK = 0.2f / 100;
+    public static final float HEALTH_TICK = 20f / 100;
     public static final int BONUS_FACTOR = 2;
     @BsonProperty("defense")
     int defenseLevel = 0;

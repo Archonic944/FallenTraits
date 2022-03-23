@@ -203,7 +203,7 @@ public class TraitsInventory implements Listener {
 					Level = Level + 1;
 					data.levelSet(trait, Level);
 					if(trait.equals("health")){
-						player.setMaxHealth(player.getMaxHealth() + BONUS_FACTOR);
+						player.setMaxHealth(player.getMaxHealth() + TraitsData.HEALTH_TICK);
 					}else if(trait.equals("speed")) player.setWalkSpeed(player.getWalkSpeed() + TraitsData.SPEED_TICK);
 					player.sendMessage(ChatColor.GREEN + "Trait trained to level " + Level + "!");
 					if (Level >= 16) {
