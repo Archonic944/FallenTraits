@@ -88,7 +88,7 @@ public class TraitsInventory implements Listener {
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			upgrademeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			upgradelore.add(ChatColor.GOLD + "You have maxed out this trait!");
-			data.canUpgrade(trait, gems);
+
 		} else {
 			upgradelore.add(ChatColor.YELLOW + "Materials required to train this trait to level " + ChatColor.BLUE
 					+ NextLevel + ChatColor.YELLOW + ": ");
@@ -197,7 +197,7 @@ public class TraitsInventory implements Listener {
 			int Level = data.levelGet(trait);
 			if (item.getType().equals(Material.DIAMOND)) {
 				int gems = ConfigUtils.getGems(player);
-				if (data.canUpgrade(trait, gems)) {
+				if (data.canUpgrade(trait, gems) && Level < 20) {
 					data.setTraitTokens(data.getTraitTokens() - TraitsData.ttsToNext(Level));
 					ConfigUtils.deductGems(player, TraitsData.gemsToNext(data.levelGet(trait)));
 					Level = Level + 1;
