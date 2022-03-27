@@ -13,7 +13,7 @@ import org.bukkit.plugin.Plugin;
 
 public class Events implements Listener {
 	//used in MainPlugin's Events.respawn();
-	public void reapply(Player player){
+	public static void reapply(Player player){
 		TraitsData data = TraitsData.get(player);
 		int hBonus = TraitsData.bonus(data.getHealthLevel());
 		int sBonus = TraitsData.bonus(data.getSpeedLevel());
