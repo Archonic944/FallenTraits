@@ -12,9 +12,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 public class Events implements Listener {
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void forHSetAndSset(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
+	//used in MainPlugin's Events.respawn();
+	public void reapply(Player player){
 		TraitsData data = TraitsData.get(player);
 		int hBonus = TraitsData.bonus(data.getHealthLevel());
 		int sBonus = TraitsData.bonus(data.getSpeedLevel());
